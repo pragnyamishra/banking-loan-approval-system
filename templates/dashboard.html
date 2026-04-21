@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}Executive Dashboard - Loan Portfolio Management{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="mb-1" style="font-weight: 700; font-size: 1.75rem; color: #1a365d; letter-spacing: -0.025em;">
+            Portfolio Operations Dashboard
+        </h1>
+        <p class="text-muted mb-0" style="font-size: 0.875rem;">
+            Unified view of customer relationships, loan portfolio, payment flows, and risk metrics
+        </p>
+    </div>
+</div>
+
+<!-- Key Performance Indicators -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card stat-card primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <p class="stat-label text-white mb-2">ACTIVE CUSTOMERS</p>
+                        <h2 class="stat-value text-white mb-0">{{ "{:,}".format(stats.total_customers) }}</h2>
+                        <p class="text-white mb-0 mt-2" style="font-size: 0.75rem; opacity: 0.8;">
+                            <i class="fas fa-link me-1"></i> Linked to {{ "{:,}".format(stats.total_loans) }} loans
+                        </p>
+                    </div>
+                    <i class="fas fa-users stat-icon text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card stat-card success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <p class="stat-label text-white mb-2">LOAN PORTFOLIO</p>
+                        <h2 class="stat-value text-white mb-0">{{ "{:,}".format(stats.total_loans) }}</h2>
+                        <p class="text-white mb-0 mt-2" style="font-size: 0.75rem; opacity: 0.8;">
+                            <i class="fas fa-link me-1"></i> Each assessed for risk
+                        </p>
+                    </div>
+                    <i class="fas fa-file-invoice-dollar stat-icon text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card stat-card info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <p class="stat-label text-white mb-2">PORTFOLIO VALUE</p>
+                        <h2 class="stat-value text-white mb-0">${{ "{:,.0f}".format(stats.total_loan_amount / 1000000) }}M</h2>
+                        <p class="text-white mb-0 mt-2" style="font-size: 0.75rem; opacity: 0.8;">
+                            <i class="fas fa-exchange-alt me-1"></i> {{ "{:,}".format(stats.total_loans) }} payment streams
+                        </p>
+                    </div>
+                    <i class="fas fa-coins stat-icon text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card stat-card warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <p class="stat-label text-white mb-2">AVG INTEREST RATE</p>
+                        <h2 class="stat-value text-white mb-0">{{ "%.2f"|format(stats.avg_interest_rate) }}%</h2>
+                        <p class="text-white mb-0 mt-2" style="font-size: 0.75rem; opacity: 0.8;">
+                            <i class="fas fa-link me-1"></i> Correlated with risk scores
+                        </p>
+                    </div>
+                    <i class="fas fa-chart-pie stat-icon text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Database Relationship Flow Visualization -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card" style="background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);">
+            <div class="card-header" style="background: linear-gradient(to right, #1a365d, #2c5282); color: white; border: none;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1" style="font-weight: 700; font-size: 1rem;">Data Flow: Customer Journey Through Loan Lifecycle</h5>
+                        <p class="mb-0" style="font-size: 0.75rem; opacity: 0.9;">How information connects across operations: Customer → Loan → Risk Assessment & Payments</p>
+                    </div>
+                    <span class="badge" style="background: #d4a574;">Real-Time Connections</span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row text-center">
+                    <!-- Customer -->
+                    <div class="col-md-3">
+                        <div class="p-3" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); border-top: 4px solid #2c5282;">
+                            <div class="mb-3">
+                                <i class="fas fa-user-circle" style="font-size: 2.5rem; color: #2c5282;"></i>
+                            </div>
+                            <h6 style="font-weight: 700; color: #1a365d; margin-bottom: 0.5rem;">CUSTOMER BASE</h6>
+                            <div style="font-size: 1.5rem; font-weight: 700; font-family: monospace; color: #1f2937; margin-bottom: 0.5rem;">
+                                {{ "{:,}".format(stats.total_customers) }}
+                            </div>
+                            <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">Demographics & Credit Profile</p>
+                            <div class="text-start" style="font-size: 0.7rem; color: #4b5563; background: #f3f4f6; padding: 0.5rem; border-radius: 6px;">
+                                <div class="mb-1"><strong>Tracks:</strong></div>
+                                <div>• Income & Employment</div>
+                                <div>• Credit Score</div>
+                                <div>• Home Ownership</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-arrow-right" style="font-size: 2rem; color: #2c5282;"></i>
+                    </div>
+
+                    <!-- Loan -->
+                    <div class="col-md-3">
+                        <div class="p-3" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); border-top: 4px solid #2f855a;">
+                            <div class="mb-3">
+                                <i class="fas fa-file-contract" style="font-size: 2.5rem; color: #2f855a;"></i>
+                            </div>
+                            <h6 style="font-weight: 700; color: #1a365d; margin-bottom: 0.5rem;">LOAN PORTFOLIO</h6>
+                            <div style="font-size: 1.5rem; font-weight: 700; font-family: monospace; color: #1f2937; margin-bottom: 0.5rem;">
+                                {{ "{:,}".format(stats.total_loans) }}
+                            </div>
+                            <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">Each Customer → Multiple Loans</p>
+                            <div class="text-start" style="font-size: 0.7rem; color: #4b5563; background: #f3f4f6; padding: 0.5rem; border-radius: 6px;">
+                                <div class="mb-1"><strong>Links To:</strong></div>
+                                <div>• Customer (owner)</div>
+                                <div>• Risk Assessment (1:1)</div>
+                                <div>• Payment History (1:many)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                        <div class="d-flex flex-column align-items-center">
+                            <i class="fas fa-arrow-down mb-2" style="font-size: 1.5rem; color: #d97706;"></i>
+                            <i class="fas fa-arrow-down" style="font-size: 1.5rem; color: #0891b2;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Risk & Payment -->
+                    <div class="col-md-4">
+                        <!-- Risk Assessment -->
+                        <div class="p-3 mb-3" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); border-top: 4px solid #d97706;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-start flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-shield-alt me-2" style="font-size: 1.5rem; color: #d97706;"></i>
+                                        <div>
+                                            <h6 style="font-weight: 700; color: #1a365d; margin: 0; font-size: 0.85rem;">RISK ASSESSMENT</h6>
+                                            <div style="font-size: 0.7rem; color: #6b7280;">1:1 with Each Loan</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.65rem; color: #4b5563; background: #fef3c7; padding: 0.4rem; border-radius: 4px;">
+                                        DTI • Delinquencies • Credit Inquiries
+                                    </div>
+                                </div>
+                                <div class="text-center ms-2" style="font-size: 1.25rem; font-weight: 700; font-family: monospace; color: #92400e;">
+                                    {{ "{:,}".format(stats.total_loans) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Stream -->
+                        <div class="p-3" style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); border-top: 4px solid #0891b2;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="text-start flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-money-bill-wave me-2" style="font-size: 1.5rem; color: #0891b2;"></i>
+                                        <div>
+                                            <h6 style="font-weight: 700; color: #1a365d; margin: 0; font-size: 0.85rem;">PAYMENT STREAMS</h6>
+                                            <div style="font-size: 0.7rem; color: #6b7280;">Many per Loan</div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 0.65rem; color: #4b5563; background: #cffafe; padding: 0.4rem; border-radius: 4px;">
+                                        Principal • Interest • Transaction History
+                                    </div>
+                                </div>
+                                <div class="text-center ms-2" style="font-size: 1.25rem; font-weight: 700; font-family: monospace; color: #0e7490;">
+                                    9,983
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relationship Summary -->
+                <div class="mt-4 p-3" style="background: #f8fafc; border-radius: 8px; border-left: 4px solid #d4a574;">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">ONE-TO-MANY</div>
+                            <div style="font-size: 0.85rem; color: #1f2937;"><strong>1 Customer</strong> → <strong>Multiple Loans</strong></div>
+                            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem;">Track all customer borrowing activity</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">ONE-TO-ONE</div>
+                            <div style="font-size: 0.85rem; color: #1f2937;"><strong>1 Loan</strong> → <strong>1 Risk Assessment</strong></div>
+                            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem;">Every loan must be risk-evaluated</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">ONE-TO-MANY</div>
+                            <div style="font-size: 0.85rem; color: #1f2937;"><strong>1 Loan</strong> → <strong>Multiple Payments</strong></div>
+                            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem;">Complete payment transaction history</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Operational Insights -->
+<div class="row mb-4">
+    <div class="col-xl-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1" style="font-weight: 700; font-size: 1rem; color: #1f2937;">Cross-Entity Analysis: Loan Performance by Status</h5>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Joining Customer creditworthiness with Loan outcomes</p>
+                </div>
+                <span class="badge bg-primary">Multi-Table Query</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="loanStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-1" style="font-weight: 700; font-size: 1rem; color: #1f2937;">Why These Connections Matter</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3 p-3" style="background: #f0f9ff; border-left: 3px solid #0891b2; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #1a365d; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                        <i class="fas fa-link me-2"></i>Customer → Loan Link
+                    </div>
+                    <p style="font-size: 0.75rem; margin: 0; color: #374151;">
+                        Enables portfolio analysis: view all loans for one customer, assess total exposure, identify cross-selling opportunities.
+                    </p>
+                </div>
+
+                <div class="mb-3 p-3" style="background: #fef3c7; border-left: 3px solid #d97706; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #1a365d; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                        <i class="fas fa-link me-2"></i>Loan → Risk Assessment (1:1)
+                    </div>
+                    <p style="font-size: 0.75rem; margin: 0; color: #374151;">
+                        Mandatory risk evaluation: every loan requires assessment before approval. Cannot approve without risk data.
+                    </p>
+                </div>
+
+                <div class="p-3" style="background: #d1fae5; border-left: 3px solid #2f855a; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #1a365d; margin-bottom: 0.5rem; font-size: 0.85rem;">
+                        <i class="fas fa-link me-2"></i>Loan → Payment Stream
+                    </div>
+                    <p style="font-size: 0.75rem; margin: 0; color: #374151;">
+                        Complete audit trail: track every payment, calculate total received, identify delinquencies, forecast cash flow.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Integrated Business View -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1" style="font-weight: 700; font-size: 1rem; color: #1f2937;">Integrated Operations View: Recent Loan Activity</h5>
+                    <p class="mb-0 text-muted" style="font-size: 0.75rem;">Single query joining Customer, Loan, Risk, and Payment data for complete operational picture</p>
+                </div>
+                <a href="{{ url_for('loans') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-database me-1"></i> View Full Dataset
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Loan ID</th>
+                                <th>Customer Profile</th>
+                                <th>Loan Details</th>
+                                <th>Risk Metrics</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for loan in recent_loans %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary" style="font-family: monospace;">#{{ loan.loanid }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-2" style="width: 32px; height: 32px; background: linear-gradient(135deg, #1a365d, #2c5282); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem;">
+                                            {{ loan.customername[0] if loan.customername else 'U' }}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; color: #1f2937; font-size: 0.85rem;">{{ loan.customername[:20] }}...</div>
+                                            <div style="font-size: 0.7rem; color: #6b7280;">
+                                                Score: <span class="badge {% if loan.creditscore >= 700 %}bg-success{% elif loan.creditscore >= 650 %}bg-warning{% else %}bg-danger{% endif %}" style="font-size: 0.65rem;">{{ loan.creditscore }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-family: monospace; font-weight: 600; color: #1f2937; font-size: 0.85rem;">
+                                        ${{ "{:,.0f}".format(loan.loanamount) }}
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #6b7280;">
+                                        @ {{ "%.2f"|format(loan.interestrate) }}% • {{ loan.issuedate if loan.issuedate else 'N/A' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-size: 0.75rem; color: #6b7280;">
+                                        <i class="fas fa-shield-alt" style="color: #d97706;"></i> Risk assessed
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #9ca3af;">
+                                        Payment stream active
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if loan.loanstatus == 'Fully Paid' %}
+                                        <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>{{ loan.loanstatus }}</span>
+                                    {% elif loan.loanstatus == 'Current' %}
+                                        <span class="badge bg-primary"><i class="fas fa-sync-alt me-1"></i>{{ loan.loanstatus }}</span>
+                                    {% elif loan.loanstatus == 'Charged Off' %}
+                                        <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Charged Off</span>
+                                    {% else %}
+                                        <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>{{ loan.loanstatus }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('loan_detail', loan_id=loan.loanid) }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-search-plus"></i> Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-light">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i> 
+                    This view demonstrates data integration across 4 connected tables: Customer demographics linked to Loan details, with corresponding Risk assessments and Payment histories.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Professional banking color palette
+const bankingColors = {
+    navy: '#1a365d',
+    blue: '#2c5282',
+    green: '#2f855a',
+    red: '#c53030',
+    amber: '#d97706',
+    gray: '#6b7280',
+    gold: '#d4a574',
+    teal: '#0891b2',
+    purple: '#7c3aed'
+};
+
+const chartColors = [
+    bankingColors.green,    // Fully Paid
+    bankingColors.blue,     // Current
+    bankingColors.red,      // Charged Off
+    bankingColors.amber,    // Late
+    bankingColors.gray,     // Other
+    bankingColors.teal,
+    bankingColors.purple,
+    bankingColors.gold
+];
+
+// Loan Status Chart
+const statusCtx = document.getElementById('loanStatusChart').getContext('2d');
+const statusLabels = [{% for item in loan_status %}'{{ item.loanstatus }}'{% if not loop.last %}, {% endif %}{% endfor %}];
+const statusData = [{% for item in loan_status %}{{ item.count }}{% if not loop.last %}, {% endif %}{% endfor %}];
+
+new Chart(statusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusData,
+            backgroundColor: chartColors,
+            borderWidth: 0,
+            hoverOffset: 12
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 15,
+                    font: {
+                        size: 12,
+                        family: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                        weight: '500'
+                    },
+                    color: '#374151',
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            },
+            tooltip: {
+                backgroundColor: '#1f2937',
+                titleFont: {
+                    size: 13,
+                    weight: '600'
+                },
+                bodyFont: {
+                    size: 12
+                },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                    label: function(context) {
+                        let label = context.label || '';
+                        let value = context.parsed || 0;
+                        let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        let percentage = ((value / total) * 100).toFixed(1);
+                        return label + ': ' + value.toLocaleString() + ' loans (' + percentage + '%)';
+                    }
+                }
+            }
+        },
+        cutout: '60%'
+    }
+});
+</script>
+{% endblock %}
