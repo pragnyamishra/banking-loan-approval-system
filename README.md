@@ -33,7 +33,7 @@ A complete web-based loan portfolio management system built with Flask and Postg
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/pragnyamishra/banking-loan-system.git
+   git clone https://github.com/pragnyamishra/banking-loan-approval-system.git
    cd banking-loan-system
    ```
 
